@@ -54,6 +54,18 @@ $ docker ps
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 ```
 
+Note: If the tests are run while the `server` service is down, the initial
+tests may raise a TCP connection error. This is because the `tests` service is
+running before the `server` service has finished starting up. You can fix this
+ahead of time by starting the `server` service manually.
+
+```bash
+$ docker-compose up -d server # only needed once
+$ docker-compose run tests
+# ...
+$ docker-compose down # kill any running containers when you're done
+```
+
 ## Updating the Server service
 
 Any changes to the Server service require any running containers to be shut
@@ -70,6 +82,23 @@ $ docker-compose down
 $ docker-compose build server
 ```
 
+### Troubleshooting
+
+Start the server service, with STDOUT/STDERR redirected to the foreground shell:
+
+```bash
+$ docker-compose run server
+```
+
+Run `bash` on the server.
+
+```bash
+$ docker-compose run server bash
+```
+
+Note: This does _not_ setup the mkcert root CA, since it skips
+`./server/run.sh`.
+
 ## Updating the Tests service
 
 Any changes to `./tests/run.sh` or any files in `./test/lib` will be reflected
@@ -78,6 +107,16 @@ in each test run:
 ```bash
 $ docker-compose run tests
 ```
+
+You can run `bash` in the container if you have problems:
+
+```bash
+$ docker-compose run tests bash
+```
+
+Note: This does _not_ setup the mkcert root CA, since it skips
+`./tests/run.sh`. You'll need to run the same `path/to/mkcert -install` command
+if you want the server's HTTPS certificate to validate.
 
 ## Cleanup
 
