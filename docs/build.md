@@ -12,10 +12,10 @@ containers.
 
 ## Server Service
 
-The [Server Container](../server/Dockerfile) compiles the Faraday Live server,
-running it in a plain alpine container. [Docker Compose][dc] uses the mkcert
-container's volumes to access the web server PEM files. A Docker volume for just
-the `server/run.sh` script is set up to ease [development][dev].
+The [Server Container](../server/Dockerfile) compiles and runs the Faraday Live
+server. [Docker Compose][dc] uses the mkcert container's volumes to access the
+web server PEM files. A Docker volume for just the `server/run.sh` script is set
+up to ease [development][dev].
 
 ## Tests Service
 

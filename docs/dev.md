@@ -104,7 +104,7 @@ $ docker images -f dangling=true -q
 # remove all dangling images
 $ docker rmi $(docker images -f dangling=true -q)
 
-# remove a named image
+# optional: remove a named image
 $ docker rmi golang:1.12.3
 ```
 
