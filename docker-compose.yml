@@ -11,8 +11,6 @@ services:
     expose:
       - "80"
       - "443"
-    depends_on:
-      - mkcert
     networks:
       net:
         aliases:

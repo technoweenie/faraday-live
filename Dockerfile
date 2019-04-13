@@ -7,4 +7,3 @@ RUN cp $GOPATH/bin/mkcert /root/.local/share/mkcert/
 
 WORKDIR /certs
 RUN mkcert faraday-live.localhost
-RUN ls -al
