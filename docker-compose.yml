@@ -1,0 +1,44 @@
+version: "3.7"
+services:
+  mkcert:
+    build: .
+    volumes:
+      - certca:/root/.local/share/mkcert/
+      - certdata:/certs
+
+  server:
+    build: ./server
+    expose:
+      - "80"
+      - "443"
+    depends_on:
+      - mkcert
+    networks:
+      net:
+        aliases:
+          - faraday-live.localhost
+    volumes:
+      - certca:/root/.local/share/mkcert/:ro
+      - certdata:/certs:ro
+
+  tests:
+    build: ./tests
+    depends_on:
+      - server
+    networks:
+      - net
+    environment:
+      - HTTP_URL=http://faraday-live.localhost
+      - HTTPS_URL=https://faraday-live.localhost
+    volumes:
+      - certca:/root/.local/share/mkcert/:ro
+      - certdata:/certs:ro
+      - ./tests/lib:/app/lib
+      - ./tests/run.sh:/app/run.sh
+
+volumes:
+  certca:
+  certdata:
+
+networks:
+  net:
