@@ -56,11 +56,28 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 
 ## Updating the Server service
 
-TBD
+Any changes to the Server service require any running containers to be shut
+down:
+
+```bash
+$ docker-compose down
+```
+
+Any changes to any `*.go` files under `./server` require compilation:
+
+```bash
+$ docker-compose down
+$ docker-compose build server
+```
 
 ## Updating the Tests service
 
-TBD
+Any changes to `./tests/run.sh` or any files in `./test/lib` will be reflected
+in each test run:
+
+```bash
+$ docker-compose run tests
+```
 
 ## Cleanup
 
