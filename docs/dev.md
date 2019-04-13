@@ -26,6 +26,7 @@ Creating network "faraday-live_default" with the default driver
 Creating network "faraday-live_net" with the default driver
 Creating volume "faraday-live_certca" with default driver
 Creating volume "faraday-live_certdata" with default driver
+Creating faraday-live_mkcert_1 ... done
 Creating faraday-live_server_1 ... done
 ...
 ```

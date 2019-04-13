@@ -8,9 +8,8 @@ services:
 
   server:
     build: ./server
-    expose:
-      - "80"
-      - "443"
+    depends_on:
+      - mkcert # need certca and certdata volumes filled
     networks:
       net:
         aliases:
