@@ -20,6 +20,7 @@ services:
     volumes:
       - certca:/root/.local/share/mkcert/:ro
       - certdata:/certs:ro
+      - ./server/run.sh:/app/run.sh
 
   tests:
     build: ./tests

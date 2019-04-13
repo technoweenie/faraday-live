@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
@@ -9,7 +10,12 @@ import (
 	"time"
 )
 
-var port = flag.Int("port", 8080, "Network port for the HTTP server.")
+var (
+	httpPort  = flag.Int("http", 8080, "Network port for the HTTP server.")
+	httpsPort = flag.Int("https", 8081, "Network port for the HTTPS server.")
+	certFile  = flag.String("cert-file", "", "File path to PEM encoded HTTPS certificate")
+	keyFile   = flag.String("key-file", "", "File path to PEM encoded HTTPS key")
+)
 
 func main() {
 	flag.Parse()
@@ -17,10 +23,41 @@ func main() {
 	http.HandleFunc("/requests", reqHandler)
 	http.HandleFunc("/requests/", reqHandler)
 
-	log.Printf("Starting echo server on port %d...", *port)
+	log.Printf("Starting Live server on port %d...", *httpPort)
 
-	bind := fmt.Sprintf(":%d", *port)
-	log.Fatal(http.ListenAndServe(bind, nil))
+	httpAddr := fmt.Sprintf(":%d", *httpPort)
+	if httpsNotConfigured() {
+		log.Fatal(http.ListenAndServe(httpAddr, nil))
+		return
+	}
+
+	cert, err := tls.LoadX509KeyPair(*certFile, *keyFile)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	go http.ListenAndServe(httpAddr, nil)
+	server := &http.Server{
+		Addr: fmt.Sprintf(":%d", *httpsPort),
+		TLSConfig: &tls.Config{
+			Certificates: []tls.Certificate{cert},
+		},
+	}
+	log.Fatal(server.ListenAndServeTLS("", ""))
+}
+
+func httpsNotConfigured() bool {
+	if *httpsPort < 1 {
+		return true
+	}
+	if len(*certFile) == 0 {
+		return true
+	}
+	if len(*keyFile) == 0 {
+		return true
+	}
+	return false
 }
 
 type ctxkey int

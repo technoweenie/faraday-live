@@ -1,6 +1,6 @@
 FROM golang:1.12.3 AS build
 WORKDIR /app
-COPY ./* ./
+COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
 
 FROM alpine
