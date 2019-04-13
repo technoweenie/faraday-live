@@ -1,7 +1,10 @@
 version: "3.7"
 services:
   mkcert:
-    build: .
+    build:
+      context: .
+      args:
+        host: faraday-live.localhost
     volumes:
       - certca:/root/.local/share/mkcert/
       - certdata:/certs
