@@ -26,5 +26,4 @@ $ docker-compose run tests
   * Extract to separate project
 * Tests
   * Write *real* tests
-  * Use rspec
   * Test all the adapters

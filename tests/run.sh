@@ -1,5 +1,6 @@
 #!/bin/bash
 
-ruby ./lib/insecure.rb
+rspec ./spec/insecure_spec.rb
+echo "installing local CA..."
 /root/.local/share/mkcert/mkcert -install
-ruby ./lib/run.rb
+rspec ./spec/secure_spec.rb

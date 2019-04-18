@@ -29,12 +29,12 @@ services:
     networks:
       - net
     environment:
-      - HTTP_URL=http://faraday-live.localhost
-      - HTTPS_URL=https://faraday-live.localhost
+      - HTTP_HOST=faraday-live.localhost
     volumes:
       - certca:/root/.local/share/mkcert/:ro
       - certdata:/certs:ro
-      - ./tests/lib:/app/lib
+      - ./tests/spec:/app/spec
+      - ./tests/.rspec:/app/.rspec
       - ./tests/run.sh:/app/run.sh
 
 volumes:

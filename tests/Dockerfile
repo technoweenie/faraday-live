@@ -5,6 +5,7 @@ WORKDIR /app
 COPY . ./
 
 # install all non-git gems
+RUN gem install bundler -v '~> 2.0.1' --no-document
 RUN bundle install --without development test -j4 --retry 3
 
 # install just the non-git gems. These will change more frequently.
