@@ -30,10 +30,12 @@ shared_examples 'a connection making requests' do |base_url, adapter|
 
   describe "with #{adapter}: #DELETE" do
     it_behaves_like 'an idempotent request', :delete, adapter
+    it_behaves_like 'a json request', :delete, adapter
   end if FaradayMethods.delete_method?(adapter)
 
   describe "with #{adapter}: #GET" do
     it_behaves_like 'an idempotent request', :get, adapter
+    it_behaves_like 'a json request', :get, adapter
   end if FaradayMethods.get_method?(adapter)
 
   describe "with #{adapter}: #HEAD" do
@@ -52,6 +54,18 @@ shared_examples 'a connection making requests' do |base_url, adapter|
   describe "with #{adapter}: #OPTIONS" do
     it_behaves_like 'an idempotent request', :options, adapter
   end if FaradayMethods.options_method?(adapter)
+
+  describe "with #{adapter}: #PATCH" do
+    it_behaves_like 'a form post request', :patch, adapter
+  end if FaradayMethods.patch_method?(adapter)
+
+  describe "with #{adapter}: #POST" do
+    it_behaves_like 'a form post request', :post, adapter
+  end if FaradayMethods.post_method?(adapter)
+
+  describe "with #{adapter}: #PUT" do
+    it_behaves_like 'a form post request', :put, adapter
+  end if FaradayMethods.put_method?(adapter)
 
   describe "with #{adapter}: #TRACE" do
     it_behaves_like 'an idempotent request', :trace, adapter
@@ -75,11 +89,48 @@ shared_examples 'an idempotent request' do |http_method, adapter|
   end
 end
 
-shared_examples 'any request' do |http_method|
+shared_examples 'a form post request' do |http_method, adapter|
   let(:response) do
-    conn.public_send(http_method, 'test')
+    conn.public_send(http_method, 'test') do |req|
+      req.body = {request_param: 'faraday live'}
+    end
   end
 
+  include_examples 'any request', http_method
+
+  it 'sends form content' do
+    expect(body['Header']['Content-Type']).to eq(["application/x-www-form-urlencoded"])
+  end
+
+  it 'sends request body' do
+    expect(body['ContentLength']).to eq(26)
+    expect(body['Form']['request_param']).to eq(['faraday live']),
+      "got: #{body['Form'].inspect}"
+  end
+end
+
+shared_examples 'a json request' do |http_method, adapter|
+  let(:response) do
+    conn.public_send(http_method, 'test') do |req|
+      req.headers[:content_type] = 'application/json'
+      req.body = {request_param: ['faraday live']}.to_json
+    end
+  end
+
+  include_examples 'any request', http_method
+
+  it 'sends form content' do
+    expect(body['Header']['Content-Type']).to eq(["application/json"])
+  end
+
+  it 'sends request body' do
+    expect(body['ContentLength']).to eq(34)
+    expect(body['Form']['request_param']).to eq(['faraday live']),
+      "got: #{body['Form'].inspect}"
+  end
+end
+
+shared_examples 'any request' do |http_method|
   {
     'Content-Type' => 'application/json',
   }.each do |key, value|

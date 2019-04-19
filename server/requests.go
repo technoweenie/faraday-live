@@ -11,11 +11,6 @@ import (
 )
 
 func HandleRequests(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "error parsing request body as form: %+v", err)
-	}
-
 	host := r.Host
 	if shost, _, err := net.SplitHostPort(r.Host); err == nil {
 		host = shost
@@ -31,6 +26,14 @@ func HandleRequests(w http.ResponseWriter, r *http.Request) {
 		ContentLength:    r.ContentLength,
 	}
 
+	var err error
+	req.Form, err = parseRequestBody(r)
+	if err != nil {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, "error parsing request body as form: %+v", err)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
@@ -39,6 +42,21 @@ func HandleRequests(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(req); err != nil {
 		log.Printf("ERR: %+v", err)
 	}
+}
+
+func parseRequestBody(r *http.Request) (url.Values, error) {
+	if r.Header.Get("Content-Type") == "application/json" {
+		values := make(map[string][]string)
+		if err := json.NewDecoder(r.Body).Decode(&values); err != nil {
+			return url.Values{}, err
+		}
+		return url.Values(values), nil
+	}
+
+	if err := r.ParseForm(); err != nil {
+		return url.Values{}, err
+	}
+	return r.Form, nil
 }
 
 type Request struct {
