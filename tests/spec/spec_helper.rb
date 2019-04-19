@@ -4,6 +4,7 @@ require 'pp'
 require 'bundler/setup'
 Bundler.require
 require 'json'
+Dir['./spec/support/**/*.rb'].each { |f| require f }
 
 puts "ruby v#{RUBY_VERSION}"
 puts "faraday v#{Faraday::VERSION}"
@@ -107,7 +108,6 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  config.include FaradayHelpers
 end
-
-
-Dir['./spec/support/**/*.rb'].each { |f| require f }
