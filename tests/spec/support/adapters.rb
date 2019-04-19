@@ -6,10 +6,10 @@ class FaradayAdapters
   end
 
   def self.adapters
-    @adapters ||= adapters!
+    @adapters ||= adapter_keys.map { |key| ADAPTERS[key] }.tap(&:compact!)
   end
 
-  def self.adapters!
+  def self.adapter_keys
     if !(adapters = explicit_adapters).empty?
       return adapters
     end
@@ -34,4 +34,54 @@ class FaradayAdapters
       key.to_sym
     end
   end
+
+  class Adapter
+    attr_reader :key
+
+    def initialize(key, *features)
+      @key = key
+      @features = Set.new(features)
+    end
+
+    def to_s
+      @key.to_s
+    end
+
+    [
+      :trace_method, # enables TRACE tests
+      :connect_with_response_body, # enables CONNECT tests WITH response body
+    ].each do |feature|
+      define_method("#{feature}?") { @features.include?(feature) }
+    end
+
+    # enables CONNECT tests with or without response body
+    def connect_method?
+      @features.include?(:connect_method) ||
+        @features.include?(:connect_with_response_body)
+    end
+  end
+
+  ADAPTERS = {
+    :em_http => Adapter.new(:em_http,
+      :trace_method, :connect_with_response_body),
+
+    :em_synchrony => Adapter.new(:em_synchrony),
+
+    :excon => Adapter.new(:excon,
+      :trace_method, :connect_with_response_body),
+
+    :httpclient => Adapter.new(:httpclient,
+      :trace_method),
+
+    :net_http_persistent => Adapter.new(:net_http_persistent,
+      :trace_method, :connect_with_response_body),
+
+    :net_http => Adapter.new(:net_http,
+      :trace_method, :connect_with_response_body),
+
+    :patron => Adapter.new(:patron),
+
+    :typhoeus => Adapter.new(:typhoeus,
+      :trace_method, :connect_with_response_body),
+  }
 end

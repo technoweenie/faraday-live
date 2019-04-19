@@ -5,47 +5,59 @@ shared_examples 'a connection making requests' do |base_url, adapter|
     conn_options = {
       headers: {
         'X-Faraday-Live' => '1',
-        user_agent: 'Faraday Live Client',
+        user_agent: "Faraday: #{adapter}",
       },
     }
 
     Faraday.new("#{base_url}/requests", conn_options) do |conn|
       conn.request :url_encoded
-      conn.adapter(adapter)
+      conn.adapter(adapter.key)
     end
   end
 
-  context "with #{adapter}:" do
-    describe '#DELETE' do
-      it_behaves_like 'an idempotent request', :delete
-    end
+  describe "with #{adapter}: #CONNECT" do
+    it_behaves_like 'an idempotent request', :connect, adapter
+  end if adapter.connect_method?
 
-    describe '#GET' do
-      it_behaves_like 'an idempotent request', :get
-    end
+  describe "with #{adapter}: #DELETE" do
+    it_behaves_like 'an idempotent request', :delete, adapter
+  end
 
-    describe '#HEAD' do
-      include_examples 'any request', :head
-      it 'receives empty response body' do
-        expect(response.headers[:content_length].to_i).to be > 0
-        expect(response.body).to eq('')
-      end
+  describe "with #{adapter}: #GET" do
+    it_behaves_like 'an idempotent request', :get, adapter
+  end
+
+  describe "with #{adapter}: #HEAD" do
+    include_examples 'any request', :head
+    it 'receives empty response body' do
+      expect(response.headers[:content_length].to_i).to be > 0
+      expect(response.body).to eq('')
     end
   end
+
+  describe "with #{adapter}: #OPTIONS" do
+    it_behaves_like 'an idempotent request', :options, adapter
+  end
+
+  describe "with #{adapter}: #TRACE" do
+    it_behaves_like 'an idempotent request', :trace, adapter
+  end if adapter.trace_method?
 end
 
-shared_examples 'an idempotent request' do |http_method|
+shared_examples 'an idempotent request' do |http_method, adapter|
   include_examples 'any request', http_method
-  include_examples 'any request expecting a response body', http_method
 
+  if http_method != :connect || adapter.connect_with_response_body?
+    include_examples 'any request expecting a response body', http_method, adapter
 
-  it 'sends no body' do
-    expect(body['ContentLength']).to eq(0)
-    expect(body['BodySignature']).to be_nil
-  end
+    it 'sends no body' do
+      expect(body['ContentLength']).to eq(0)
+      expect(body['BodySignature']).to be_nil
+    end
 
-  it 'sends no form' do
-    expect(body['Form']).to be_nil
+    it 'sends no form' do
+      expect(body['Form']).to be_nil
+    end
   end
 end
 
@@ -67,11 +79,18 @@ shared_examples 'any request' do |http_method|
   end
 end
 
-shared_examples 'any request expecting a response body' do |http_method|
-  let(:body) { JSON.parse(response.body) }
+shared_examples 'any request expecting a response body' do |http_method, adapter|
+  let(:body) do
+    begin
+      JSON.parse(response.body)
+    rescue JSON::ParserError
+      puts response.body
+      raise
+    end
+  end
 
   {
-    'User-Agent' => 'Faraday Live Client',
+    'User-Agent' => "Faraday: #{adapter.key}",
     'X-Faraday-Live' => '1',
   }.each do |key, value|
     it "sends #{key} request header" do
