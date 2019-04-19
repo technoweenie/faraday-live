@@ -31,6 +31,8 @@ Creating faraday-live_server_1 ... done
 ...
 ```
 
+### Choosing Tests
+
 This runs tests against three webservers:
 
 1. HTTP server on port 80 (`TEST_PROTO=http`)
@@ -57,6 +59,17 @@ $ TEST_ADAPTER=net_http docker-compose run tests
 # separate multiple adapters with a comma
 $ TEST_ADAPTER=net_http,excon docker-compose run tests
 ```
+
+Finally, you can specify the http methods to test:
+
+```bash
+$ TEST_METHOD=get,head docker-compose run tests
+
+# mix and match to your heart's content
+$ TEST_PROTO=https TEST_ADAPTER=net_http TEST_METHOD=put docker-compose run tests
+```
+
+### Troubleshooting
 
 You can see the running live server in Docker:
 
