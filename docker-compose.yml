@@ -31,6 +31,7 @@ services:
     environment:
       - HTTP_HOST=faraday-live.localhost
       - FARADAY_ADAPTER=${TEST_ADAPTER:-}
+      - FARADAY_METHOD=${TEST_METHOD:-}
       - SERVER_PROTOCOL=${TEST_PROTO:-}
     volumes:
       - certca:/root/.local/share/mkcert/:ro

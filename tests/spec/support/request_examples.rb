@@ -26,15 +26,15 @@ shared_examples 'a connection making requests' do |base_url, adapter|
 
   describe "with #{adapter}: #CONNECT" do
     it_behaves_like 'an idempotent request', :connect, adapter
-  end if adapter.connect_method?
+  end if FaradayMethods.connect_method?(adapter)
 
   describe "with #{adapter}: #DELETE" do
     it_behaves_like 'an idempotent request', :delete, adapter
-  end
+  end if FaradayMethods.delete_method?(adapter)
 
   describe "with #{adapter}: #GET" do
     it_behaves_like 'an idempotent request', :get, adapter
-  end
+  end if FaradayMethods.get_method?(adapter)
 
   describe "with #{adapter}: #HEAD" do
     let(:response) do
@@ -47,15 +47,15 @@ shared_examples 'a connection making requests' do |base_url, adapter|
       expect(response.headers[:content_length].to_i).to be > 0
       expect(response.body).to eq('')
     end
-  end
+  end if FaradayMethods.head_method?(adapter)
 
   describe "with #{adapter}: #OPTIONS" do
     it_behaves_like 'an idempotent request', :options, adapter
-  end
+  end if FaradayMethods.options_method?(adapter)
 
   describe "with #{adapter}: #TRACE" do
     it_behaves_like 'an idempotent request', :trace, adapter
-  end if adapter.trace_method?
+  end if FaradayMethods.trace_method?(adapter)
 end
 
 shared_examples 'an idempotent request' do |http_method, adapter|
