@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -19,9 +20,14 @@ func HandleRequests(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "error reading body: %+v", bodyErr)
 	}
 
+	host := r.Host
+	if shost, _, err := net.SplitHostPort(r.Host); err == nil {
+		host = shost
+	}
+
 	req := Request{
 		Method:           r.Method,
-		Host:             r.Host,
+		Host:             host,
 		RequestURI:       r.RequestURI,
 		Header:           r.Header,
 		TransferEncoding: r.TransferEncoding,
