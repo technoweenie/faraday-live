@@ -2,7 +2,7 @@
 
 # Examples for all adapter accessing the given base url
 shared_examples 'a connection making requests' do |base_url, adapter|
-  let(:conn) do
+  before :all do
     conn_options = {
       headers: {
         'X-Faraday-Live' => '1',
@@ -10,7 +10,7 @@ shared_examples 'a connection making requests' do |base_url, adapter|
       },
     }
 
-    Faraday.new("#{base_url}/requests", conn_options) do |conn|
+    @conn = Faraday.new("#{base_url}/requests", conn_options) do |conn|
       conn.request :url_encoded
       conn.adapter(adapter.key)
     end
@@ -40,8 +40,8 @@ shared_examples 'a connection making requests' do |base_url, adapter|
   end if FaradayMethods.get_method?(adapter)
 
   describe "with #{adapter}: #HEAD" do
-    let(:response) do
-      conn.head('test')
+    before :all do
+      @response = conn.head('test')
     end
 
     include_examples 'any request', :head

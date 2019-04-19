@@ -2,8 +2,8 @@
 
 # Examples for an adapter and http method with a json request body
 shared_examples 'a json request' do |http_method, adapter|
-  let(:response) do
-    conn.public_send(http_method, 'test') do |req|
+  before :all do
+    @response = conn.public_send(http_method, 'test') do |req|
       req.headers[:content_type] = 'application/json'
       req.body = {request_param: ['faraday live']}.to_json
     end
