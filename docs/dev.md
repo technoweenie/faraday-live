@@ -93,6 +93,14 @@ $ docker-compose run tests
 $ docker-compose down # kill any running containers when you're done
 ```
 
+If you want to see the server output, you can also run it manually in another
+terminal:
+
+```bash
+$ docker-compose up server
+# CTRL+C to shut down gracefully
+```
+
 ## Updating the Server service
 
 Any changes to the Server service require any running containers to be shut

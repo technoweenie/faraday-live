@@ -23,10 +23,9 @@ func main() {
 	http.HandleFunc("/requests", reqHandler)
 	http.HandleFunc("/requests/", reqHandler)
 
-	log.Printf("Starting Live server on port %d...", *httpPort)
-
 	httpAddr := fmt.Sprintf(":%d", *httpPort)
 	if httpsNotConfigured() {
+		log.Printf("Starting Live HTTP server on port %d...", *httpPort)
 		log.Fatal(http.ListenAndServe(httpAddr, nil))
 		return
 	}
@@ -37,6 +36,7 @@ func main() {
 		return
 	}
 
+	log.Printf("Starting Live HTTP server on port %d...", *httpPort)
 	go http.ListenAndServe(httpAddr, nil)
 	server := &http.Server{
 		Addr: fmt.Sprintf(":%d", *httpsPort),
@@ -44,6 +44,7 @@ func main() {
 			Certificates: []tls.Certificate{cert},
 		},
 	}
+	log.Printf("Starting Live HTTPS server on port %d...", *httpsPort)
 	log.Fatal(server.ListenAndServeTLS("", ""))
 }
 
@@ -66,9 +67,12 @@ const ctxStarted = ctxkey(1)
 
 func WithStarted(h http.HandlerFunc) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		now := time.Now()
 		r2 := r.WithContext(
-			context.WithValue(r.Context(), ctxStarted, time.Now()),
+			context.WithValue(r.Context(), ctxStarted, now),
 		)
 		h(w, r2)
+		log.Printf("%s %s %s [%s]",
+			r.Method, r.RequestURI, r.UserAgent(), time.Since(now))
 	}
 }
