@@ -15,6 +15,15 @@ shared_examples 'a connection making requests' do |base_url, adapter|
     end
   end
 
+  let(:body) do
+    begin
+      JSON.parse(response.body)
+    rescue JSON::ParserError
+      puts response.body
+      raise
+    end
+  end
+
   describe "with #{adapter}: #CONNECT" do
     it_behaves_like 'an idempotent request', :connect, adapter
   end if adapter.connect_method?
@@ -28,7 +37,12 @@ shared_examples 'a connection making requests' do |base_url, adapter|
   end
 
   describe "with #{adapter}: #HEAD" do
+    let(:response) do
+      conn.head('test')
+    end
+
     include_examples 'any request', :head
+    
     it 'receives empty response body' do
       expect(response.headers[:content_length].to_i).to be > 0
       expect(response.body).to eq('')
@@ -45,6 +59,10 @@ shared_examples 'a connection making requests' do |base_url, adapter|
 end
 
 shared_examples 'an idempotent request' do |http_method, adapter|
+  let(:response) do
+    conn.public_send(http_method, 'test')
+  end
+
   include_examples 'any request', http_method
 
   if http_method != :connect || adapter.connect_with_response_body?
@@ -80,15 +98,6 @@ shared_examples 'any request' do |http_method|
 end
 
 shared_examples 'any request expecting a response body' do |http_method, adapter|
-  let(:body) do
-    begin
-      JSON.parse(response.body)
-    rescue JSON::ParserError
-      puts response.body
-      raise
-    end
-  end
-
   {
     'User-Agent' => "Faraday: #{adapter.key}",
     'X-Faraday-Live' => '1',
