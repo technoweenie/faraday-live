@@ -6,4 +6,12 @@ module FaradayHelpers
   def sha256(s)
     Digest::SHA256.hexdigest(s.to_s)
   end
+
+  def response
+    @response
+  end
+
+  def conn
+    @conn
+  end
 end

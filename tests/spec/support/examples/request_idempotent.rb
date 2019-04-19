@@ -2,8 +2,8 @@
 
 # runs tests for an adapter and http method with no request body
 shared_examples 'an idempotent request' do |http_method, adapter|
-  let(:response) do
-    conn.public_send(http_method, 'test')
+  before :all do
+    @response = conn.public_send(http_method, 'test')
   end
 
   include_examples 'any request', http_method
