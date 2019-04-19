@@ -42,7 +42,7 @@ shared_examples 'a connection making requests' do |base_url, adapter|
     end
 
     include_examples 'any request', :head
-    
+
     it 'receives empty response body' do
       expect(response.headers[:content_length].to_i).to be > 0
       expect(response.body).to eq('')
@@ -70,11 +70,7 @@ shared_examples 'an idempotent request' do |http_method, adapter|
 
     it 'sends no body' do
       expect(body['ContentLength']).to eq(0)
-      expect(body['BodySignature']).to be_nil
-    end
-
-    it 'sends no form' do
-      expect(body['Form']).to be_nil
+      expect(body['Form']).to eq({})
     end
   end
 end

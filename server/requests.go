@@ -1,11 +1,8 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"net/http"
@@ -14,10 +11,9 @@ import (
 )
 
 func HandleRequests(w http.ResponseWriter, r *http.Request) {
-	bodySize, bodySHA, bodyErr := ScanBody(r.Body)
-	if bodyErr != nil {
+	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "error reading body: %+v", bodyErr)
+		fmt.Fprintf(w, "error parsing request body as form: %+v", err)
 	}
 
 	host := r.Host
@@ -32,11 +28,7 @@ func HandleRequests(w http.ResponseWriter, r *http.Request) {
 		Header:           r.Header,
 		TransferEncoding: r.TransferEncoding,
 		Form:             r.Form,
-		ContentLength:    bodySize,
-	}
-
-	if bodySize > 0 {
-		req.BodySignature = &bodySHA
+		ContentLength:    r.ContentLength,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -55,15 +47,7 @@ type Request struct {
 	RequestURI       string
 	Header           http.Header
 	ContentLength    int64
-	BodySignature    *string
 	TransferEncoding []string
 	Form             url.Values
 	Duration         string
-}
-
-func ScanBody(rc io.ReadCloser) (int64, string, error) {
-	h := sha256.New()
-	n, err := io.Copy(h, rc)
-	rc.Close()
-	return n, hex.EncodeToString(h.Sum(nil)), err
 }
