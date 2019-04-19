@@ -10,6 +10,7 @@ shared_examples 'a json request' do |http_method, adapter|
   end
 
   include_examples 'any request', http_method
+  include_examples 'any request expecting a response body', http_method, adapter
 
   it 'sends form content' do
     expect(body['Header']['Content-Type']).to eq(["application/json"])

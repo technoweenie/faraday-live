@@ -1,20 +1,5 @@
 # frozen_string_literal: true
 
-# Examples for ALL responses from the server
-shared_examples 'any request' do |http_method|
-  {
-    'Content-Type' => 'application/json',
-  }.each do |key, value|
-    it "returns #{key} response header" do
-      expect(response.headers[key]).to eq(value)
-    end
-  end
-
-  it 'returns response status' do
-    expect(response.status).to eq(200)
-  end
-end
-
 # Examples for all adapter accessing the given base url
 shared_examples 'a connection making requests' do |base_url, adapter|
   let(:conn) do
