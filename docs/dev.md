@@ -31,6 +31,33 @@ Creating faraday-live_server_1 ... done
 ...
 ```
 
+This runs tests against three webservers:
+
+1. HTTP server on port 80 (`TEST_PROTO=http`)
+2. Self-signed HTTPS server on port 443 (`TEST_PROTO=unverified`)
+3. Verified and valid HTTPS server on port 443 (`TEST_PROTO=https`)
+
+
+You can choose to run one or more explicitly:
+
+```bash
+# test just one adapter
+$ TEST_PROTO=http docker-compose run tests
+
+# separate multiple adapters with a comma
+$ TEST_PROTO=unverified,https docker-compose run tests
+```
+
+You can also specify which adapters to test:
+
+```bash
+# test just one adapter
+$ TEST_ADAPTER=net_http docker-compose run tests
+
+# separate multiple adapters with a comma
+$ TEST_ADAPTER=net_http,excon docker-compose run tests
+```
+
 You can see the running live server in Docker:
 
 ```bash

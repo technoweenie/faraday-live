@@ -30,6 +30,8 @@ services:
       - net
     environment:
       - HTTP_HOST=faraday-live.localhost
+      - FARADAY_ADAPTER=${TEST_ADAPTER}
+      - SERVER_PROTOCOL=${TEST_PROTO}
     volumes:
       - certca:/root/.local/share/mkcert/:ro
       - certdata:/certs:ro
