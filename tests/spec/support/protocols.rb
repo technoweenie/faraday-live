@@ -22,7 +22,7 @@ class ServerProtocols
       return protos
     end
 
-    [:http, :https]
+    [:http, :https, :unverified]
   end
 
   def self.explicit_protocols
