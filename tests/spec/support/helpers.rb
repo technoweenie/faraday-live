@@ -7,11 +7,18 @@ module FaradayHelpers
     Digest::SHA256.hexdigest(s.to_s)
   end
 
+  def conn
+    @conn
+  end
+
   def response
     @response
   end
 
-  def conn
-    @conn
+  def body
+    JSON.parse(response.body)
+  rescue JSON::ParserError
+    puts response.body
+    raise
   end
 end

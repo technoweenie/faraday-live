@@ -16,15 +16,6 @@ shared_examples 'a connection making requests' do |base_url, adapter|
     end
   end
 
-  let(:body) do
-    begin
-      JSON.parse(response.body)
-    rescue JSON::ParserError
-      puts response.body
-      raise
-    end
-  end
-
   describe "with #{adapter}: #CONNECT" do
     it_behaves_like 'an idempotent request', :connect, adapter
   end if FaradayMethods.connect_method?(adapter)
