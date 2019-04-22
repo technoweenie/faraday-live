@@ -32,7 +32,7 @@ shared_examples 'a connection making requests' do |base_url, adapter|
 
   describe "with #{adapter}: #HEAD" do
     before :all do
-      @response = conn.head('test')
+      @response = conn.head('head_request')
     end
 
     include_examples 'any request', :head

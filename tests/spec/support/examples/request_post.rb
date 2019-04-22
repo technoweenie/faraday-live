@@ -3,13 +3,14 @@
 # Examples for an adapter and http method with a form request body
 shared_examples 'a form post request' do |http_method, adapter|
   before :all do
-    @response = conn.public_send(http_method, 'test') do |req|
+    @response = conn.public_send(http_method, 'post_request') do |req|
       req.body = {request_param: 'faraday live'}
     end
   end
 
   include_examples 'any request', http_method
-  include_examples 'any request expecting a response body', http_method, adapter
+  include_examples 'any request expecting a response body',
+    http_method, adapter, requesturi: '/requests/post_request'
 
   it 'sends form content' do
     expect(body['Header']['Content-Type']).to eq(["application/x-www-form-urlencoded"])

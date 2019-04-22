@@ -18,7 +18,9 @@ end
 # Examples for any requests expecting a response body from the server. Skipped
 # for HEAD requests, and CONNECT requests for some specific adapters.
 # See tests/spec/support/adapters.rb
-shared_examples 'any request expecting a response body' do |http_method, adapter|
+shared_examples 'any request expecting a response body' do |http_method, adapter, options|
+  options ||= {}
+
   {
     'User-Agent' => "Faraday: #{adapter.key}",
     'X-Faraday-Live' => '1',
@@ -43,6 +45,6 @@ shared_examples 'any request expecting a response body' do |http_method, adapter
   end
 
   it 'crafts correct request uri' do
-    expect(body['RequestURI']).to eq('/requests/test')
+    expect(body['RequestURI']).to eq(options[:requesturi] || '/requests/test')
   end
 end
