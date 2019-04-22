@@ -3,7 +3,7 @@
 describe 'Faraday with HTTP server' do
   FaradayAdapters.each do |adapter|
     it_behaves_like 'a connection making requests',
-      "http://#{ENV['HTTP_HOST']}", adapter
+      FaradayURLs.test_http_server, adapter
   end
 end if ServerProtocols.http?
 
