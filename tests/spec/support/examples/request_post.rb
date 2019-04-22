@@ -10,11 +10,10 @@ shared_examples 'a form post request' do |http_method, adapter|
 
   include_examples 'any request', http_method
   include_examples 'any request expecting a response body',
-    http_method, adapter, requesturi: '/requests/post_request'
-
-  it 'sends form content' do
-    expect(body['Header']['Content-Type']).to eq(["application/x-www-form-urlencoded"])
-  end
+    http_method, adapter, requesturi: '/requests/post_request',
+    request_header: {
+      'Content-Type' => 'application/x-www-form-urlencoded',
+    }
 
   it 'sends request body' do
     expect(body['ContentLength']).to eq(26)

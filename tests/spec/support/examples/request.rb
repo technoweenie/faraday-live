@@ -20,13 +20,14 @@ end
 # See tests/spec/support/adapters.rb
 shared_examples 'any request expecting a response body' do |http_method, adapter, options|
   options ||= {}
-
-  {
+  req_header = {
     'User-Agent' => "Faraday: #{adapter.key}",
     'X-Faraday-Live' => '1',
-  }.each do |key, value|
+  }.update(options[:request_header] || {})
+
+  req_header.each do |key, value|
     it "sends #{key} request header" do
-      ua = body['Header'][key]
+      ua = body['Header'][key.to_s]
       expect(ua[0].to_s).to eq(value)
       expect(ua.size).to eq(1)
     end
