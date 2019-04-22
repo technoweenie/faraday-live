@@ -27,9 +27,15 @@ shared_examples 'any request expecting a response body' do |http_method, adapter
 
   req_header.each do |key, value|
     it "sends #{key} request header" do
-      ua = body['Header'][key.to_s]
-      expect(ua[0].to_s).to eq(value)
-      expect(ua.size).to eq(1)
+      actual = body['Header'][key.to_s]
+      match_value = case value
+      when Regexp
+        match(value)
+      else
+        eq(value)
+      end
+      expect(actual[0].to_s).to match_value
+      expect(actual.size).to eq(1)
     end
   end
 
