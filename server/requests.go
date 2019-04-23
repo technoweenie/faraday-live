@@ -27,15 +27,14 @@ func HandleRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var err error
+	w.Header().Set("Content-Type", "application/json")
 	req.Form, err = parseRequestBody(r)
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "error parsing request body as form: %+v", err)
-		return
+		req.Error = fmt.Sprintf("error parsing request body as form: %+v", err)
+	} else {
+		w.WriteHeader(200)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
 
 	started := r.Context().Value(ctxStarted).(time.Time)
 	req.Duration = time.Now().Sub(started).String()
@@ -68,4 +67,5 @@ type Request struct {
 	TransferEncoding []string
 	Form             url.Values
 	Duration         string
+	Error            string
 }

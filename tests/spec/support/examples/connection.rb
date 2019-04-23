@@ -11,6 +11,7 @@ shared_examples 'a connection making requests' do |base_url, adapter|
     }
 
     @conn = Faraday.new("#{base_url}/requests", conn_options) do |conn|
+      conn.request :multipart
       conn.request :url_encoded
       conn.adapter(adapter.key)
     end
@@ -49,14 +50,17 @@ shared_examples 'a connection making requests' do |base_url, adapter|
 
   describe "with #{adapter}: #PATCH" do
     it_behaves_like 'a form post request', :patch, adapter
+    it_behaves_like 'a multipart request', :patch, adapter
   end if FaradayMethods.patch_method?(adapter)
 
   describe "with #{adapter}: #POST" do
     it_behaves_like 'a form post request', :post, adapter
+    it_behaves_like 'a multipart request', :post, adapter
   end if FaradayMethods.post_method?(adapter)
 
   describe "with #{adapter}: #PUT" do
     it_behaves_like 'a form post request', :put, adapter
+    it_behaves_like 'a multipart request', :put, adapter
   end if FaradayMethods.put_method?(adapter)
 
   describe "with #{adapter}: #TRACE" do

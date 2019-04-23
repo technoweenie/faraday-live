@@ -16,9 +16,14 @@ module FaradayHelpers
   end
 
   def body
-    JSON.parse(response.body)
+    @body ||= JSON.parse(response.body)
   rescue JSON::ParserError
     puts response.body
     raise
+  end
+
+  def form_parts
+    return [] if @response.nil?
+    @form_parts ||= Array(body['FormParts']).each { |p| p['Header'] ||= {} }
   end
 end
