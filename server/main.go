@@ -21,10 +21,8 @@ func main() {
 	flag.Parse()
 	reqHandler := WithStarted(HandleRequests)
 	mpHandler := WithStarted(HandleMultipart)
-	http.HandleFunc("/requests", reqHandler)
 	http.HandleFunc("/requests/", reqHandler)
 	http.HandleFunc("/multipart", mpHandler)
-	http.HandleFunc("/multipart/", mpHandler)
 
 	httpAddr := fmt.Sprintf(":%d", *httpPort)
 	if httpsNotConfigured() {
