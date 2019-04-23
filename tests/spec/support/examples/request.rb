@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 # Examples for ALL responses from the server
-shared_examples 'any request' do |http_method|
-  {
+shared_examples 'any request' do |http_method, options|
+  options ||= {}
+  res_header = {
     'Content-Type' => 'application/json',
-  }.each do |key, value|
+  }.update(options[:response_header] || {})
+
+  res_header.each do |key, value|
     it "returns #{key} response header" do
       expect(response.headers[key]).to eq(value)
     end

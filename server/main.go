@@ -17,13 +17,14 @@ var (
 
 func main() {
 	flag.Parse()
-	http.HandleFunc("/requests/", Handle("http", Requests))
-	http.HandleFunc("/multipart", Handle("http", Multipart))
 
-	httpAddr := fmt.Sprintf(":%d", *httpPort)
+	httpServer := &http.Server{
+		Addr:    fmt.Sprintf(":%d", *httpPort),
+		Handler: newMux("http"),
+	}
 	if httpsNotConfigured() {
 		log.Printf("Starting Live HTTP server on port %d...", *httpPort)
-		log.Fatal(http.ListenAndServe(httpAddr, nil))
+		log.Fatal(httpServer.ListenAndServe())
 		return
 	}
 
@@ -34,15 +35,23 @@ func main() {
 	}
 
 	log.Printf("Starting Live HTTP server on port %d...", *httpPort)
-	go http.ListenAndServe(httpAddr, nil)
-	server := &http.Server{
-		Addr: fmt.Sprintf(":%d", *httpsPort),
+	go httpServer.ListenAndServe()
+	httpsServer := &http.Server{
+		Addr:    fmt.Sprintf(":%d", *httpsPort),
+		Handler: newMux("https"),
 		TLSConfig: &tls.Config{
 			Certificates: []tls.Certificate{cert},
 		},
 	}
 	log.Printf("Starting Live HTTPS server on port %d...", *httpsPort)
-	log.Fatal(server.ListenAndServeTLS("", ""))
+	log.Fatal(httpsServer.ListenAndServeTLS("", ""))
+}
+
+func newMux(kind string) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/requests/", Handle(kind, Requests))
+	mux.HandleFunc("/multipart", Handle(kind, Multipart))
+	return mux
 }
 
 func httpsNotConfigured() bool {

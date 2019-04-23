@@ -37,7 +37,10 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
       @response = conn.head('head_request')
     end
 
-    include_examples 'any request', :head
+    include_examples 'any request', :head,
+      response_header: {
+        'Server' => "Faraday Live (#{url_kind})",
+      }
 
     it 'receives empty response body' do
       expect(response.headers[:content_length].to_i).to be > 0
