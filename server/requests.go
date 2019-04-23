@@ -3,44 +3,18 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"net"
 	"net/http"
 	"net/url"
-	"time"
 )
 
-func HandleRequests(w http.ResponseWriter, r *http.Request) {
-	host := r.Host
-	if shost, _, err := net.SplitHostPort(r.Host); err == nil {
-		host = shost
-	}
-
-	req := Request{
-		Method:           r.Method,
-		Host:             host,
-		RequestURI:       r.RequestURI,
-		Header:           r.Header,
-		TransferEncoding: r.TransferEncoding,
-		Form:             r.Form,
-		ContentLength:    r.ContentLength,
-	}
-
-	var err error
-	w.Header().Set("Content-Type", "application/json")
-	req.Form, err = parseRequestBody(r)
+func Requests(w http.ResponseWriter, r *http.Request, info *Request) (RequestInfo, error) {
+	form, err := parseRequestBody(r)
 	if err != nil {
-		w.WriteHeader(500)
-		req.Error = fmt.Sprintf("error parsing request body as form: %+v", err)
-	} else {
-		w.WriteHeader(200)
+		info.Error = fmt.Sprintf("error parsing request body as form: %+v", err)
 	}
 
-	started := r.Context().Value(ctxStarted).(time.Time)
-	req.Duration = time.Now().Sub(started).String()
-	if err := json.NewEncoder(w).Encode(req); err != nil {
-		log.Printf("ERR: %+v", err)
-	}
+	info.Form = form
+	return info, nil
 }
 
 func parseRequestBody(r *http.Request) (url.Values, error) {
@@ -56,16 +30,4 @@ func parseRequestBody(r *http.Request) (url.Values, error) {
 		return url.Values{}, err
 	}
 	return r.Form, nil
-}
-
-type Request struct {
-	Method           string
-	Host             string
-	RequestURI       string
-	Header           http.Header
-	ContentLength    int64
-	TransferEncoding []string
-	Form             url.Values
-	Duration         string
-	Error            string
 }

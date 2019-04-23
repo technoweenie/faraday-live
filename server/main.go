@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 )
 
 var (
@@ -19,10 +17,8 @@ var (
 
 func main() {
 	flag.Parse()
-	reqHandler := WithStarted(HandleRequests)
-	mpHandler := WithStarted(HandleMultipart)
-	http.HandleFunc("/requests/", reqHandler)
-	http.HandleFunc("/multipart", mpHandler)
+	http.HandleFunc("/requests/", Handle("http", Requests))
+	http.HandleFunc("/multipart", Handle("http", Multipart))
 
 	httpAddr := fmt.Sprintf(":%d", *httpPort)
 	if httpsNotConfigured() {
@@ -60,20 +56,4 @@ func httpsNotConfigured() bool {
 		return true
 	}
 	return false
-}
-
-type ctxkey int
-
-const ctxStarted = ctxkey(1)
-
-func WithStarted(h http.HandlerFunc) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		now := time.Now()
-		r2 := r.WithContext(
-			context.WithValue(r.Context(), ctxStarted, now),
-		)
-		h(w, r2)
-		log.Printf("%s %s %s [%s]",
-			r.Method, r.RequestURI, r.UserAgent(), time.Since(now))
-	}
 }
