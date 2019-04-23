@@ -2,14 +2,13 @@
 
 describe 'Faraday with HTTP server' do
   FaradayAdapters.each do |adapter|
-    it_behaves_like 'a connection making requests',
-      FaradayURLs.test_http_server, adapter
+    it_behaves_like 'a connection making requests', :http, adapter
   end
 end if ServerProtocols.http?
 
 
 describe 'Faraday with unverified HTTPS server' do
-  let(:base_url) { FaradayURLs.test_https_server }
+  let(:url_kind) { :https }
 
   FaradayAdapters.each do |adapter|
     next if adapter.key == :typhoeus # https://github.com/technoweenie/faraday-live/issues/4
@@ -17,7 +16,7 @@ describe 'Faraday with unverified HTTPS server' do
 
     context "using #{adapter}" do
       it "fails with verification enabled" do
-        @conn = Faraday.new("#{base_url}/requests") do |conn|
+        @conn = Faraday.new(requests_url) do |conn|
           conn.request :url_encoded
           conn.adapter(adapter.key)
         end
@@ -28,7 +27,7 @@ describe 'Faraday with unverified HTTPS server' do
       end
 
       it "succeeds with verification disabled" do
-        @conn = Faraday.new("#{base_url}/requests", ssl: { verify: false }) do |conn|
+        @conn = Faraday.new(requests_url, ssl: { verify: false }) do |conn|
           conn.request :url_encoded
           conn.adapter(adapter.key)
         end

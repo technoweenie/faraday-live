@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Examples for all adapter accessing the given base url
-shared_examples 'a connection making requests' do |base_url, adapter|
+shared_examples 'a connection making requests' do |url_kind, adapter|
   before :all do
     conn_options = {
       headers: {
@@ -10,7 +10,8 @@ shared_examples 'a connection making requests' do |base_url, adapter|
       },
     }
 
-    @conn = Faraday.new("#{base_url}/requests", conn_options) do |conn|
+    requests_url = FaradayURLs.test_server(url_kind, "requests")
+    @conn = Faraday.new(requests_url, conn_options) do |conn|
       conn.request :multipart
       conn.request :url_encoded
       conn.adapter(adapter.key)

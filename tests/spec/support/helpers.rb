@@ -26,4 +26,8 @@ module FaradayHelpers
     return [] if @response.nil?
     @form_parts ||= Array(body['FormParts']).each { |p| p['Header'] ||= {} }
   end
+
+  def requests_url
+    FaradayURLs.test_server(url_kind, "requests")
+  end
 end

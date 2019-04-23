@@ -7,7 +7,6 @@ MULTIPART_FILE3 = File.join(dir, 'request.rb')
 
 # Examples for an adapter and http method with a multipart request body
 shared_examples 'a multipart request' do |http_method, adapter|
-
   before :all do
     @response = conn.public_send(http_method, '/multipart') do |req|
       req.headers[:content_type] = 'multipart/form-data'
