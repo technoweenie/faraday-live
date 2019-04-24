@@ -17,7 +17,9 @@ func main() {
 
 	servers := &ServerList{}
 	servers.Add(":8080", newProxy("http_proxy"))
+	servers.Add(":9080", newProxy("http_auth_proxy"))
 	servers.AddWithTLS(":8443", newProxy("https_proxy"), *certFile, *keyFile)
+	servers.AddWithTLS(":9443", newProxy("https_auth_proxy"), *certFile, *keyFile)
 	servers.Listen()
 }
 

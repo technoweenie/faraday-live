@@ -11,6 +11,12 @@ describe 'Faraday with HTTPS server' do
         proxy: :http_proxy,
         server: :https,
       }
+
+      it_behaves_like 'a proxied connection', adapter, {
+        proxy: :http_auth_proxy,
+        server: :https,
+        auth: "faraday:live",
+      }
     end
   end
 end if ServerProtocols.test?(:https, :proxy)

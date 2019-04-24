@@ -13,7 +13,7 @@ shared_examples 'a proxied connection' do |adapter, options|
         'X-Faraday-Live' => '1',
         user_agent: "Faraday: #{adapter}",
       },
-      proxy: FaradayURLs.server(proxy_url_kind),
+      proxy: FaradayURLs.server(proxy_url_kind, options[:auth]),
     }
 
     reqs_url = FaradayURLs.server(server_url_kind, "requests")
