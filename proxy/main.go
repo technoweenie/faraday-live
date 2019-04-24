@@ -15,41 +15,77 @@ var (
 func main() {
 	flag.Parse()
 
-	httpServer := &http.Server{
-		Addr:    ":8080",
-		Handler: newProxy("http"),
+	servers := &ServerList{}
+	servers.Add(":8080", newProxy("http_proxy"))
+	servers.AddWithTLS(":8443", newProxy("https_proxy"), *certFile, *keyFile)
+	servers.Listen()
+}
+
+type ServerList struct {
+	Servers    []*http.Server
+	LastServer *http.Server
+}
+
+func (l *ServerList) Listen() {
+	for _, srv := range l.Servers {
+		go l.listen(srv)
 	}
-	if httpsNotConfigured() {
-		log.Println("Starting Live HTTP server on port 8080...")
-		log.Fatal(httpServer.ListenAndServe())
+
+	if l.LastServer != nil {
+		l.listen(l.LastServer)
+	}
+}
+
+func (l *ServerList) listen(srv *http.Server) {
+	log.Printf("Starting Proxy server on %s...", srv.Addr)
+	if srv.TLSConfig == nil {
+		srv.ListenAndServe()
+		return
+	}
+	srv.ListenAndServeTLS("", "")
+}
+
+func (l *ServerList) Add(addr string, handler http.Handler) {
+	l.add(&http.Server{
+		Addr:    addr,
+		Handler: handler,
+	})
+}
+
+func (l *ServerList) AddWithTLS(addr string, handler http.Handler, certFile, keyFile string) {
+	if len(certFile) == 0 || len(keyFile) == 0 {
 		return
 	}
 
-	cert, err := tls.LoadX509KeyPair(*certFile, *keyFile)
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	log.Println("Starting Live HTTP server on port 8080...")
-	go httpServer.ListenAndServe()
-	httpsServer := &http.Server{
-		Addr:    ":8443",
-		Handler: newProxy("https"),
+	l.add(&http.Server{
+		Addr:    addr,
+		Handler: handler,
 		TLSConfig: &tls.Config{
 			Certificates: []tls.Certificate{cert},
 		},
-	}
-	log.Println("Starting Live HTTPS server on port 8443...")
-	log.Fatal(httpsServer.ListenAndServeTLS("", ""))
+	})
 }
 
-func httpsNotConfigured() bool {
-	if len(*certFile) == 0 {
-		return true
+func (l *ServerList) add(s *http.Server) {
+	if l.LastServer == nil {
+		l.LastServer = s
+		return
 	}
-	if len(*keyFile) == 0 {
-		return true
+	l.Servers = append(l.Servers, s)
+}
+
+func Servers(possibles ...*http.Server) []*http.Server {
+	servers := make([]*http.Server, 0, len(possibles))
+	for _, srv := range possibles {
+		if srv != nil {
+			servers = append(servers, srv)
+		}
 	}
-	return false
+	return servers
 }
