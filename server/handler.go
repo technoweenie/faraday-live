@@ -63,15 +63,28 @@ func Handle(kind string, infohandler InfoHandler) http.HandlerFunc {
 		finalinfo := info2.OrigRequest()
 		finalinfo.Duration = time.Now().Sub(now).String()
 
-		buf := &bytes.Buffer{}
-		writers := io.MultiWriter(w, buf)
-
-		if err := json.NewEncoder(writers).Encode(info2); err != nil {
-			log.Printf("ERR encoding JSON: %+v", err)
-		}
-
 		log.Printf("%s %s %s [%s]",
 			r.Method, r.RequestURI, r.UserAgent(), time.Since(now))
-		log.Printf("RESP: %+v", buf.String())
+
+		if len(finalinfo.Error) > 0 {
+			SendJSON(w, 500, info2)
+		} else {
+			SendJSON(w, 200, info2)
+		}
+
 	}
+}
+
+func SendJSON(w http.ResponseWriter, status int, obj interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	buf := &bytes.Buffer{}
+	writers := io.MultiWriter(w, buf)
+
+	if err := json.NewEncoder(writers).Encode(obj); err != nil {
+		log.Printf("ERR encoding JSON: %+v", err)
+	}
+
+	log.Printf("RESP: %+v", buf.String())
 }
