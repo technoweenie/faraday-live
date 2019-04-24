@@ -9,20 +9,18 @@ services:
       - certca:/root/.local/share/mkcert/
       - certdata:/certs
 
-  tinyproxy:
-    build:
-      context: .
-      dockerfile: Dockerfile.tinyproxy
+  proxy:
+    build: ./proxy
     depends_on:
       - mkcert # need certca and certdata volumes filled
     networks:
       net:
         aliases:
-          - tinyproxy.localhost
-    restart: always
+          - live-proxy.localhost
     volumes:
       - certca:/root/.local/share/mkcert/:ro
       - certdata:/certs:ro
+      - ./proxy/run.sh:/app/run.sh
 
   server:
     build: ./server
@@ -41,12 +39,12 @@ services:
     build: ./tests
     depends_on:
       - server
-      - tinyproxy
+      - proxy
     networks:
       - net
     environment:
       - HTTP_HOST=faraday-live.localhost
-      - PROXY_HOST=tinyproxy.localhost:8888
+      - PROXY_HOST=live-proxy.localhost:8080
       - FARADAY_ADAPTER=${TEST_ADAPTER:-}
       - FARADAY_METHOD=${TEST_METHOD:-}
       - SERVER_PROTOCOL=${TEST_PROTO:-}
