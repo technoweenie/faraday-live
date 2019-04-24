@@ -10,6 +10,11 @@ encoded certificate and key files for the server. [Docker Compose][dc] sets up
 volumes to share the Root CA and web server PEM files with the other docker
 containers.
 
+## Proxy Service
+
+The [Proxy Container](../proxy/Dockerfile) compiles and runs the custom Faraday
+Live proxy server.
+
 ## Server Service
 
 The [Server Container](../server/Dockerfile) compiles and runs the Faraday Live
@@ -26,10 +31,10 @@ contains all the ruby scripts) are set up to ease [development][dev].
 
 The Tests Container runs the following:
 
-* `ruby lib/insecure.rb` to test against the HTTPS server before the Root CA
+* `rspec spec/insecure.rb` to test against the HTTPS server before the Root CA
 has been installed.
 * `mkcert -install`
-* `ruby lib/run.rb` runs all of the other tests.
+* `rspec spec/run.rb` runs all of the other tests.
 
 [dc]: ../docker-compose.yml
 [dev]: ./dev.md
