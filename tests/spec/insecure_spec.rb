@@ -2,9 +2,17 @@
 
 describe 'Faraday with HTTP server' do
   FaradayAdapters.each do |adapter|
-    it_behaves_like 'a connection making requests', :http, adapter
+    if ServerProtocols.http?
+      it_behaves_like 'a connection making requests', :http, adapter
+    end
+
+    if ServerProtocols.proxy?
+      it_behaves_like 'a proxied connection', adapter, {
+        server: :http,
+      }
+    end
   end
-end if ServerProtocols.http?
+end if ServerProtocols.test?(:http, :proxy)
 
 
 describe 'Faraday with unverified HTTPS server' do

@@ -13,6 +13,14 @@ class ServerProtocols
     protocols.include?(:unverified)
   end
 
+  def self.proxy?
+    protocols.include?(:proxy)
+  end
+
+  def self.test?(*protos)
+    protos.any? { |p| protocols.include?(p) }
+  end
+
   def self.protocols
     @protocols ||= Set.new(protocols!)
   end
@@ -22,7 +30,7 @@ class ServerProtocols
       return protos
     end
 
-    [:http, :https, :unverified]
+    [:http, :https, :unverified, :proxy]
   end
 
   def self.explicit_protocols

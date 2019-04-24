@@ -12,7 +12,13 @@ shared_examples 'any request' do |http_method, options|
 
   res_header.each do |key, value|
     it "returns #{key} response header" do
-      expect(response.headers[key]).to eq(value)
+      match_value = case value
+      when Regexp
+        match(value)
+      else
+        eq(value)
+      end
+      expect(response.headers[key].to_s).to match_value
     end
   end
 
