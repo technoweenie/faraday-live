@@ -18,6 +18,8 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
     end
   end
 
+  include_examples 'common request tests', url_kind, adapter
+
   describe "with #{adapter}: #CONNECT" do
     it_behaves_like 'an idempotent request', :connect, url_kind, adapter
   end if FaradayMethods.connect_method?(adapter)
@@ -28,7 +30,6 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
   end if FaradayMethods.delete_method?(adapter)
 
   describe "with #{adapter}: #GET" do
-    it_behaves_like 'an idempotent request', :get, url_kind, adapter
     it_behaves_like 'a json request', :get, url_kind, adapter
   end if FaradayMethods.get_method?(adapter)
 
@@ -55,11 +56,6 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
     it_behaves_like 'a form post request', :patch, url_kind, adapter
     it_behaves_like 'a multipart request', :patch, url_kind, adapter
   end if FaradayMethods.patch_method?(adapter)
-
-  describe "with #{adapter}: #POST" do
-    it_behaves_like 'a form post request', :post, url_kind, adapter
-    it_behaves_like 'a multipart request', :post, url_kind, adapter
-  end if FaradayMethods.post_method?(adapter)
 
   describe "with #{adapter}: #PUT" do
     it_behaves_like 'a form post request', :put, url_kind, adapter
