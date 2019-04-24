@@ -10,7 +10,7 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
       },
     }
 
-    reqs_url = FaradayURLs.test_server(url_kind, "requests")
+    reqs_url = FaradayURLs.server(url_kind, "requests")
     @conn = Faraday.new(reqs_url, conn_options) do |conn|
       conn.request :multipart
       conn.request :url_encoded

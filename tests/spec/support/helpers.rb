@@ -28,6 +28,6 @@ module FaradayHelpers
   end
 
   def requests_url
-    FaradayURLs.test_server(url_kind, "requests")
+    FaradayURLs.server(url_kind, "requests")
   end
 end

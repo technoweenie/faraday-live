@@ -44,7 +44,7 @@ services:
       - net
     environment:
       - HTTP_HOST=faraday-live.localhost
-      - PROXY_HOST=live-proxy.localhost:8080
+      - PROXY_HOST=live-proxy.localhost
       - FARADAY_ADAPTER=${TEST_ADAPTER:-}
       - FARADAY_METHOD=${TEST_METHOD:-}
       - SERVER_PROTOCOL=${TEST_PROTO:-}

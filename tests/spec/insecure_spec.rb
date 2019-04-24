@@ -8,6 +8,7 @@ describe 'Faraday with HTTP server' do
 
     if ServerProtocols.proxy?
       it_behaves_like 'a proxied connection', adapter, {
+        proxy: :http_proxy,
         server: :http,
       }
     end
