@@ -6,7 +6,7 @@ MULTIPART_FILE2 = File.join(dir, 'request_idempotent.rb')
 MULTIPART_FILE3 = File.join(dir, 'request.rb')
 
 # Examples for an adapter and http method with a multipart request body
-shared_examples 'a multipart request' do |http_method, adapter|
+shared_examples 'a multipart request' do |http_method, url_kind, adapter|
   before :all do
     @response = conn.public_send(http_method, '/multipart') do |req|
       req.headers[:content_type] = 'multipart/form-data'
@@ -21,7 +21,10 @@ shared_examples 'a multipart request' do |http_method, adapter|
     end
   end
 
-  include_examples 'any request', http_method
+  include_examples 'any request', http_method, {
+    url_kind: url_kind,
+  }
+  
   include_examples 'any request expecting a response body',
     http_method, adapter, requesturi: '/multipart',
     request_header: {

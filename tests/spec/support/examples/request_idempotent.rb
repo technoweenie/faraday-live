@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 # runs tests for an adapter and http method with no request body
-shared_examples 'an idempotent request' do |http_method, adapter|
+shared_examples 'an idempotent request' do |http_method, url_kind, adapter|
   before :all do
     @response = conn.public_send(http_method, 'idempotent_request')
   end
 
-  include_examples 'any request', http_method
+  include_examples 'any request', http_method, {
+    url_kind: url_kind,
+  }
 
   if http_method != :connect || adapter.connect_with_response_body?
     include_examples 'any request expecting a response body',

@@ -6,6 +6,9 @@ shared_examples 'any request' do |http_method, options|
   res_header = {
     'Content-Type' => 'application/json',
   }.update(options[:response_header] || {})
+  if kind = options[:url_kind]
+    res_header['Server'] = "Faraday Live (#{kind})"
+  end
 
   res_header.each do |key, value|
     it "returns #{key} response header" do
