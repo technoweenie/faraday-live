@@ -42,19 +42,27 @@ shared_examples 'a multipart request' do |http_method, url_kind, adapter, option
     expect(form_parts.size).to eq(4)
   end
 
-  it_behaves_like 'a multipart form value', 0, 'key', 'value'
+  context 'with form value 0' do
+    include_examples 'a multipart form value', 0, 'key', 'value'
+  end
 
-  it_behaves_like 'a multipart form file', 1, 'file1', MULTIPART_FILE1,
-    'Content-Transfer-Encoding' => 'binary',
-    'Content-Type' => 'text/x-ruby'
+  context 'with form value 1' do
+    include_examples 'a multipart form file', 1, 'file1', MULTIPART_FILE1,
+      'Content-Transfer-Encoding' => 'binary',
+      'Content-Type' => 'text/x-ruby'
+  end
 
-  it_behaves_like 'a multipart form file', 2, 'file2', MULTIPART_FILE2,
-    'Content-Transfer-Encoding' => 'binary',
-    'Content-Type' => 'text/x-ruby'
+  context 'with form value 2' do
+    include_examples 'a multipart form file', 2, 'file2', MULTIPART_FILE2,
+      'Content-Transfer-Encoding' => 'binary',
+      'Content-Type' => 'text/x-ruby'
+  end
 
-  it_behaves_like 'a multipart form file', 3, 'file3', MULTIPART_FILE3,
-    'Content-Transfer-Encoding' => 'binary',
-    'Content-Type' => 'text/x-ruby'
+  context 'with form value 3' do
+    include_examples 'a multipart form file', 3, 'file3', MULTIPART_FILE3,
+      'Content-Transfer-Encoding' => 'binary',
+      'Content-Type' => 'text/x-ruby'
+  end
 end
 
 shared_examples 'a multipart form value' do |idx, key, value, headers|
@@ -63,19 +71,19 @@ shared_examples 'a multipart form value' do |idx, key, value, headers|
 
   let(:this_part) { form_parts[idx] }
 
-  it 'with form name' do
+  it 'sends form name' do
     expect(this_part['FormName']).to eq(key.to_s)
   end
 
-  it 'with file name' do
+  it 'sends file name' do
     expect(this_part['FileName']).to eq('')
   end
 
-  it 'with part content' do
+  it 'sends part content' do
     expect(this_part['BodySignature']).to eq(Digest::SHA256.hexdigest(value))
   end
 
-  it 'with part size' do
+  it 'sends part size' do
     expect(this_part['Size']).to eq(value.size)
   end
 end
@@ -85,24 +93,24 @@ shared_examples 'a multipart form file' do |idx, key, filename, headers|
   headers ||= {}
   let(:this_part) { form_parts[idx] }
 
-  it 'with form name' do
+  it 'sends form name' do
     expect(this_part['FormName']).to eq(key)
   end
 
-  it 'with file name' do
+  it 'sends file name' do
     expect(this_part['FileName']).to eq(File.basename(filename))
   end
 
-  it 'with part content' do
+  it 'sends part content' do
     expect(this_part['BodySignature']).to eq(Digest::SHA256.file(filename).to_s)
   end
 
-  it 'with part size' do
+  it 'sends part size' do
     expect(this_part['Size']).to eq(File.size(filename))
   end
 
   headers.each do |key, value|
-    it "with #{key} header" do
+    it "sends #{key} header" do
       expect(this_part['Header'][key]).to eq(value)
     end
   end
