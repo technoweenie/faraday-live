@@ -9,9 +9,14 @@ COPY Gemfile.lock .
 RUN gem install bundler -v '~> 2.0.1' --no-document
 RUN bundle install --without development test -j4 --retry 3
 
+ARG faraday_gem_ref=master
+ARG faraday_http_gem_ref=master
+
 # install just the non-git gems. These will change more frequently.
 RUN echo "gem 'faraday', git: 'https://github.com/lostisland/faraday'," >> Gemfile
-RUN echo "  ref: ENV['FARADAY_REF'], require: 'faraday'" >> Gemfile
+RUN echo "  ref: '$faraday_gem_ref', require: 'faraday'" >> Gemfile
+RUN echo "gem 'faraday-http', git: 'https://github.com/lostisland/faraday-http'," >> Gemfile
+RUN echo "  ref: '$faraday_http_gem_ref', require: 'faraday/http'" >> Gemfile
 
 RUN bundle install \
   # Remove unneeded files (cached *.gem, *.o, *.c)

@@ -21,9 +21,5 @@ $ docker-compose run tests
 ## TODO
 
 * Server
-  * Endpoint for testing multipart requests
   * Endpoint for testing streaming requests and responses
   * Extract to separate project
-* Tests
-  * Write *real* tests
-  * Test all the adapters

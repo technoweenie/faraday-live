@@ -3,6 +3,7 @@
 require 'pp'
 require 'bundler/setup'
 Bundler.require
+require 'http'
 require 'json'
 Dir['./spec/support/**/*.rb'].each { |f| require f }
 

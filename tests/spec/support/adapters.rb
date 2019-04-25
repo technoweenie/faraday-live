@@ -72,6 +72,8 @@ class FaradayAdapters
     :excon => Adapter.new(:excon,
       :trace_method, :connect_method),
 
+    :http => Adapter.new(:http),
+
     :httpclient => Adapter.new(:httpclient,
       :trace_method, :https_proxy_bug),
 
