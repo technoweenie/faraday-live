@@ -7,4 +7,5 @@ RUN mkcert -install
 RUN cp $GOPATH/bin/mkcert /root/.local/share/mkcert/
 
 WORKDIR /certs
-RUN mkcert $host
+COPY mkcert.sh .
+RUN ./mkcert.sh $host

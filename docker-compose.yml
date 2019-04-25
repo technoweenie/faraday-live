@@ -4,7 +4,7 @@ services:
     build:
       context: .
       args:
-        host: faraday-live.localhost
+        host: faraday-live.localhost live-proxy.localhost
     volumes:
       - certca:/root/.local/share/mkcert/
       - certdata:/certs
