@@ -20,13 +20,17 @@ func Requests(w http.ResponseWriter, r *http.Request, info *Request) (RequestInf
 func parseRequestBody(r *http.Request) (url.Values, error) {
 	if r.Header.Get("Content-Type") == "application/json" {
 		values := make(map[string][]string)
-		if err := json.NewDecoder(r.Body).Decode(&values); err != nil {
+		err := json.NewDecoder(r.Body).Decode(&values)
+		r.Body.Close()
+		if err != nil {
 			return url.Values{}, err
 		}
 		return url.Values(values), nil
 	}
 
-	if err := r.ParseForm(); err != nil {
+	err := r.ParseForm()
+	r.Body.Close()
+	if err != nil {
 		return url.Values{}, err
 	}
 	return r.Form, nil

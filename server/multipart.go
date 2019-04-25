@@ -47,6 +47,7 @@ func Multipart(w http.ResponseWriter, r *http.Request, info *Request) (RequestIn
 		}
 	}
 
+	r.Body.Close()
 	return minfo, nil
 }
 
