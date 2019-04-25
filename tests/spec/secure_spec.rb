@@ -20,9 +20,6 @@ FaradayAdapters.each do |adapter|
     }
   end if ServerProtocols.proxy?
 
-  next if adapter.key == :typhoeus # https://github.com/technoweenie/faraday-live/issues/4
-  next if adapter.key == :httpclient # https://github.com/technoweenie/faraday-live/issues/6
-
   describe "#{adapter} using HTTPS proxy with HTTPS server" do
     it "fails to connect" do
       reqs_url = FaradayURLs.server(:https, "requests")
@@ -32,7 +29,7 @@ FaradayAdapters.each do |adapter|
       end
       expect { conn.get 'wat' }.to raise_error(Faraday::ConnectionFailed)
     end
-  end if ServerProtocols.proxy?
+  end if ServerProtocols.proxy? && !adapter.https_proxy_bug?
 
   describe "#{adapter} using authenticated HTTPS proxy with HTTPS server" do
     it "fails to connect" do
@@ -43,5 +40,5 @@ FaradayAdapters.each do |adapter|
       end
       expect { conn.get 'wat' }.to raise_error(Faraday::ConnectionFailed)
     end
-  end if ServerProtocols.proxy?
+  end if ServerProtocols.proxy? && !adapter.https_proxy_bug?
 end

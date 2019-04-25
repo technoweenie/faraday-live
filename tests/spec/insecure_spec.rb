@@ -20,9 +20,6 @@ FaradayAdapters.each do |adapter|
     }
   end if ServerProtocols.proxy?
 
-  next if adapter.key == :typhoeus # https://github.com/technoweenie/faraday-live/issues/4
-  next if adapter.key == :patron # https://github.com/technoweenie/faraday-live/issues/4
-
   describe "#{adapter} with unverified HTTPS server" do
     let(:url_kind) { :https }
 
@@ -46,5 +43,5 @@ FaradayAdapters.each do |adapter|
       res = conn.get('unverified_with_verification')
       expect(res.status).to eq(200)
     end
-  end if ServerProtocols.unverified_https?
+  end if ServerProtocols.unverified_https? && !adapter.unverified_https_bug?
 end

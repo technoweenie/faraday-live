@@ -50,6 +50,8 @@ class FaradayAdapters
     [
       :trace_method, # enables TRACE tests
       :connect_with_response_body, # enables CONNECT tests WITH response body
+      :unverified_https_bug, # https://github.com/technoweenie/faraday-live/issues/4
+      :https_proxy_bug, # https://github.com/technoweenie/faraday-live/issues/6
     ].each do |feature|
       define_method("#{feature}?") { @features.include?(feature) }
     end
@@ -71,7 +73,7 @@ class FaradayAdapters
       :trace_method, :connect_method),
 
     :httpclient => Adapter.new(:httpclient,
-      :trace_method),
+      :trace_method, :https_proxy_bug),
 
     :net_http_persistent => Adapter.new(:net_http_persistent,
       :trace_method, :connect_with_response_body),
@@ -79,9 +81,11 @@ class FaradayAdapters
     :net_http => Adapter.new(:net_http,
       :trace_method, :connect_with_response_body),
 
-    :patron => Adapter.new(:patron),
+    :patron => Adapter.new(:patron,
+      :unverified_https_bug),
 
     :typhoeus => Adapter.new(:typhoeus,
-      :trace_method, :connect_with_response_body),
+      :trace_method, :connect_with_response_body, :unverified_https_bug,
+      :https_proxy_bug),
   }
 end
