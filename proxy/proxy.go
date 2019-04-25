@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"regexp"
 
@@ -15,7 +14,6 @@ func newProxy(kind string) http.Handler {
 	proxy.Verbose = true
 
 	if reAuth.MatchString(kind) {
-		log.Println("setting up auth")
 		auth.ProxyBasic(proxy, "faraday_live", func(user, passwd string) bool {
 			return user == "faraday" && passwd == "live"
 		})
