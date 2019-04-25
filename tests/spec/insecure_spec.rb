@@ -1,26 +1,25 @@
 # frozen_string_literal: true
 
-describe 'Faraday with HTTP server' do
-  FaradayAdapters.each do |adapter|
-    if ServerProtocols.http?
-      it_behaves_like 'a connection making requests', :http, adapter
-    end
+FaradayAdapters.each do |adapter|
+  describe "#{adapter} with HTTP server" do
+    include_examples 'a connection making requests', :http, adapter
+  end if ServerProtocols.http?
 
-    if ServerProtocols.proxy?
-      it_behaves_like 'a proxied connection', adapter, {
-        proxy: :http_proxy,
-        server: :http,
-      }
+  describe "#{adapter} using HTTP proxy with HTTP server" do
+    include_examples 'a proxied connection', adapter, {
+      proxy: :http_proxy,
+      server: :http,
+    }
+  end if ServerProtocols.proxy?
 
-      it_behaves_like 'a proxied connection', adapter, {
-        proxy: :http_auth_proxy,
-        server: :http,
+  describe "#{adapter} using authenticated HTTP proxy with HTTP server" do
+    include_examples 'a proxied connection', adapter, {
+      proxy: :http_auth_proxy,
+      server: :http,
         auth: "faraday:live",
-      }
-    end
-  end
-end if ServerProtocols.test?(:http, :proxy)
-
+    }
+  end if ServerProtocols.proxy?
+end
 
 describe 'Faraday with unverified HTTPS server' do
   let(:url_kind) { :https }

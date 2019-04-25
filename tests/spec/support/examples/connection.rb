@@ -20,20 +20,20 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
 
   include_examples 'common request tests', url_kind, adapter
 
-  describe "with #{adapter}: #CONNECT" do
+  context "(#{adapter}) #CONNECT request" do
     it_behaves_like 'an idempotent request', :connect, url_kind, adapter
   end if FaradayMethods.connect_method?(adapter)
 
-  describe "with #{adapter}: #DELETE" do
+  context "(#{adapter}) #DELETE request" do
     it_behaves_like 'an idempotent request', :delete, url_kind, adapter
     it_behaves_like 'a json request', :delete, url_kind, adapter
   end if FaradayMethods.delete_method?(adapter)
 
-  describe "with #{adapter}: #GET" do
+  context "(#{adapter}) #GET request" do
     it_behaves_like 'a json request', :get, url_kind, adapter
   end if FaradayMethods.get_method?(adapter)
 
-  describe "with #{adapter}: #HEAD" do
+  context "(#{adapter}) #HEAD request" do
     before :all do
       @response = conn.head('head_request')
     end
@@ -48,21 +48,21 @@ shared_examples 'a connection making requests' do |url_kind, adapter|
     end
   end if FaradayMethods.head_method?(adapter)
 
-  describe "with #{adapter}: #OPTIONS" do
+  context "(#{adapter}) #OPTIONS request" do
     it_behaves_like 'an idempotent request', :options, url_kind, adapter
   end if FaradayMethods.options_method?(adapter)
 
-  describe "with #{adapter}: #PATCH" do
+  context "(#{adapter}) #PATCH request" do
     it_behaves_like 'a form post request', :patch, url_kind, adapter
     it_behaves_like 'a multipart request', :patch, url_kind, adapter
   end if FaradayMethods.patch_method?(adapter)
 
-  describe "with #{adapter}: #PUT" do
+  context "(#{adapter}) #PUT request" do
     it_behaves_like 'a form post request', :put, url_kind, adapter
     it_behaves_like 'a multipart request', :put, url_kind, adapter
   end if FaradayMethods.put_method?(adapter)
 
-  describe "with #{adapter}: #TRACE" do
+  context "(#{adapter}) #TRACE request" do
     it_behaves_like 'an idempotent request', :trace, url_kind, adapter
   end if FaradayMethods.trace_method?(adapter)
 end
