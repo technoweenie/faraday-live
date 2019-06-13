@@ -2,11 +2,13 @@
 FROM ruby:2.6.2 as build
 ENV LANG C.UTF-8
 WORKDIR /app
-COPY Gemfile .
-COPY Gemfile.lock .
 
 # install all non-git gems
 RUN gem install bundler -v '~> 2.0.1' --no-document
+
+COPY Gemfile .
+COPY Gemfile.lock .
+
 RUN bundle install --without development test -j4 --retry 3
 
 # install just the non-git gems. These will change more frequently.
