@@ -25,7 +25,12 @@ shared_examples 'a proxied connection' do |adapter, options|
   end
 
   # proxy does not modify https requests
-  expected = server_url_kind == :https ? '' : "goproxy (#{proxy_url_kind})"
+  expected = case proxy_url_kind
+  when :socks_proxy, :socks_auth_proxy
+    ""
+  else
+    server_url_kind == :https ? "" : "goproxy (#{proxy_url_kind})"
+  end
   include_examples 'common request tests', server_url_kind, adapter,
     response_header: {
       'Via' => expected,

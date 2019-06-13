@@ -13,8 +13,12 @@ class ServerProtocols
     protocols.include?(:unverified)
   end
 
-  def self.proxy?
-    protocols.include?(:proxy)
+  def self.http_proxy?
+    protocols.include?(:proxy) || protocols.include?(:http_proxy)
+  end
+
+  def self.socks_proxy?
+    protocols.include?(:proxy) || protocols.include?(:socks_proxy)
   end
 
   def self.test?(*protos)

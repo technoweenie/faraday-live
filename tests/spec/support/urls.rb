@@ -33,4 +33,14 @@ module FaradayURLs
     auth += "@" if auth
     "http://#{auth}#{ENV['PROXY_HOST']}:9443"
   end
+
+  def self.socks_proxy_server(auth = nil)
+    auth += "@" if auth
+    "socks://#{auth}#{ENV['PROXY_HOST']}:6000"
+  end
+
+  def self.socks_auth_proxy_server(auth = nil)
+    auth += "@" if auth
+    "socks://#{auth}#{ENV['PROXY_HOST']}:6001"
+  end
 end
