@@ -36,7 +36,11 @@ services:
       - ./server/run.sh:/app/run.sh
 
   tests:
-    build: ./tests
+    build:
+      context: ./tests
+      args:
+        faraday_gem_ref: ${FARADAY_GEM_REF:-master}
+        faraday_http_gem_ref: ${FARADAY_HTTP_GEM_REF:-master}
     depends_on:
       - server
       - proxy
