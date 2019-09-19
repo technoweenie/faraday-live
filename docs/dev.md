@@ -40,7 +40,7 @@ This runs tests against these webservers and proxies:
 3. Verified and valid HTTPS server on port 443 (`TEST_PROTO=https`)
 4. HTTP proxy server (`TEST_PROTO=http_proxy`)
 5. SOCKS proxy server (`TEST_PROTO=socks_proxy`)
-6. Both HTTP and SOCKS proxy servers (`TEST_PROTO=proxy`)
+6. LEGACY: Only HTTP proxy server (`TEST_PROTO=proxy`)
 
 You can choose to run one or more explicitly:
 
