@@ -50,9 +50,9 @@ services:
     environment:
       - HTTP_HOST=faraday-live.localhost
       - PROXY_HOST=live-proxy.localhost
-      - FARADAY_ADAPTER=${TEST_ADAPTER:-}
-      - FARADAY_METHOD=${TEST_METHOD:-}
-      - SERVER_PROTOCOL=${TEST_PROTO:-}
+      - TEST_ADAPTER=${TEST_ADAPTER:-}
+      - TEST_METHOD=${TEST_METHOD:-}
+      - TEST_PROTO=${TEST_PROTO:-}
     volumes:
       - certca:/root/.local/share/mkcert/:ro
       - certdata:/certs:ro

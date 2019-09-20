@@ -28,7 +28,7 @@ class FaradayAdapters
   end
 
   def self.explicit_adapters
-    ENV['FARADAY_ADAPTER'].to_s.split(',').map! do |key|
+    ENV['TEST_ADAPTER'].to_s.split(',').map! do |key|
       key.strip!
       key.downcase!
       key.to_sym

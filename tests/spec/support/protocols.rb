@@ -38,7 +38,7 @@ class ServerProtocols
   end
 
   def self.explicit_protocols
-    ENV['SERVER_PROTOCOL'].to_s.split(',').map! do |key|
+    ENV['TEST_PROTO'].to_s.split(',').map! do |key|
       key.strip!
       key.downcase!
       key.to_sym

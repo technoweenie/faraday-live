@@ -29,7 +29,7 @@ class FaradayMethods
   end
 
   def self.explicit_methods
-    ENV['FARADAY_METHOD'].to_s.split(',').map! do |key|
+    ENV['TEST_METHOD'].to_s.split(',').map! do |key|
       key.strip!
       key.downcase!
       key.to_sym
