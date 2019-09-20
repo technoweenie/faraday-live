@@ -10,15 +10,30 @@ FaradayAdapters.each do |adapter|
       proxy: :http_proxy,
       server: :https,
     }
-  end if ServerProtocols.proxy?
+  end if ServerProtocols.http_proxy?
 
-  describe "#{adapter} using HTTP proxy with HTTPS server" do
+  describe "#{adapter} using authenticated HTTP proxy with HTTPS server" do
     include_examples 'a proxied connection', adapter, {
       proxy: :http_auth_proxy,
       server: :https,
       auth: "faraday:live",
     }
-  end if ServerProtocols.proxy?
+  end if ServerProtocols.http_proxy?
+
+  describe "#{adapter} using Socks proxy with HTTPS server" do
+    include_examples 'a proxied connection', adapter, {
+      proxy: :socks_proxy,
+      server: :https,
+    }
+  end if ServerProtocols.socks_proxy? && adapter.socks_proxy?
+
+  describe "#{adapter} using authenticated Socks proxy with HTTPS server" do
+    include_examples 'a proxied connection', adapter, {
+      proxy: :socks_auth_proxy,
+      server: :https,
+      auth: "faraday:live",
+    }
+  end if ServerProtocols.socks_proxy? && adapter.socks_proxy?
 
   describe "#{adapter} using HTTPS proxy with HTTPS server" do
     it "fails to connect" do
@@ -29,7 +44,7 @@ FaradayAdapters.each do |adapter|
       end
       expect { conn.get 'wat' }.to raise_error(Faraday::ConnectionFailed)
     end
-  end if ServerProtocols.proxy? && !adapter.https_proxy_bug?
+  end if ServerProtocols.http_proxy? && !adapter.https_proxy_bug?
 
   describe "#{adapter} using authenticated HTTPS proxy with HTTPS server" do
     it "fails to connect" do
@@ -40,5 +55,5 @@ FaradayAdapters.each do |adapter|
       end
       expect { conn.get 'wat' }.to raise_error(Faraday::ConnectionFailed)
     end
-  end if ServerProtocols.proxy? && !adapter.https_proxy_bug?
+  end if ServerProtocols.http_proxy? && !adapter.https_proxy_bug?
 end

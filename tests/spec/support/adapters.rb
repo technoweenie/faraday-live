@@ -28,7 +28,7 @@ class FaradayAdapters
   end
 
   def self.explicit_adapters
-    ENV['FARADAY_ADAPTER'].to_s.split(',').map! do |key|
+    ENV['TEST_ADAPTER'].to_s.split(',').map! do |key|
       key.strip!
       key.downcase!
       key.to_sym
@@ -52,6 +52,7 @@ class FaradayAdapters
       :connect_with_response_body, # enables CONNECT tests WITH response body
       :unverified_https_bug, # https://github.com/technoweenie/faraday-live/issues/4
       :https_proxy_bug, # https://github.com/technoweenie/faraday-live/issues/6
+      :socks_proxy,
     ].each do |feature|
       define_method("#{feature}?") { @features.include?(feature) }
     end
@@ -81,7 +82,7 @@ class FaradayAdapters
       :trace_method, :connect_with_response_body),
 
     :net_http => Adapter.new(:net_http,
-      :trace_method, :connect_with_response_body),
+      :socks_proxy, :trace_method, :connect_with_response_body),
 
     :patron => Adapter.new(:patron,
       :unverified_https_bug),

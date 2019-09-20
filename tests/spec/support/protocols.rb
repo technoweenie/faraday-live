@@ -13,8 +13,12 @@ class ServerProtocols
     protocols.include?(:unverified)
   end
 
-  def self.proxy?
-    protocols.include?(:proxy)
+  def self.http_proxy?
+    protocols.include?(:proxy) || protocols.include?(:http_proxy)
+  end
+
+  def self.socks_proxy?
+    protocols.include?(:socks_proxy)
   end
 
   def self.test?(*protos)
@@ -34,7 +38,7 @@ class ServerProtocols
   end
 
   def self.explicit_protocols
-    ENV['SERVER_PROTOCOL'].to_s.split(',').map! do |key|
+    ENV['TEST_PROTO'].to_s.split(',').map! do |key|
       key.strip!
       key.downcase!
       key.to_sym

@@ -5,6 +5,8 @@ import (
 	"flag"
 	"log"
 	"net/http"
+
+	socks5 "github.com/armon/go-socks5"
 )
 
 var (
@@ -14,6 +16,24 @@ var (
 
 func main() {
 	flag.Parse()
+
+	unauthSocks, err := socks5.New(&socks5.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	authSocks, err := socks5.New(&socks5.Config{
+		Credentials: socks5.StaticCredentials(map[string]string{
+			"faraday": "live",
+		}),
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Starting Socks Proxy servers on :6000, :6001...")
+	go unauthSocks.ListenAndServe("tcp", ":6000")
+	go authSocks.ListenAndServe("tcp", ":6001")
 
 	servers := &ServerList{}
 	servers.Add(":8080", newProxy("http_proxy"))
@@ -39,7 +59,7 @@ func (l *ServerList) Listen() {
 }
 
 func (l *ServerList) listen(srv *http.Server) {
-	log.Printf("Starting Proxy server on %s...", srv.Addr)
+	log.Printf("Starting HTTP Proxy server on %s...", srv.Addr)
 	if srv.TLSConfig == nil {
 		srv.ListenAndServe()
 		return
