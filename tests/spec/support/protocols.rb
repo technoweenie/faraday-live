@@ -18,7 +18,7 @@ class ServerProtocols
   end
 
   def self.socks_proxy?
-    protocols.include?(:proxy) || protocols.include?(:socks_proxy)
+    protocols.include?(:socks_proxy)
   end
 
   def self.test?(*protos)

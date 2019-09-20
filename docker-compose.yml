@@ -41,6 +41,7 @@ services:
       args:
         faraday_gem_ref: ${FARADAY_GEM_REF:-master}
         faraday_http_gem_ref: ${FARADAY_HTTP_GEM_REF:-master}
+        socksify_gem_ref: ${FARADAY_SOCKSIFY_GEM_REF:-master}
     depends_on:
       - server
       - proxy

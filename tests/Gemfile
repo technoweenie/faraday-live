@@ -8,5 +8,4 @@ gem 'net-http-persistent'
 gem 'patron', '>= 0.4.2', platforms: :ruby
 gem 'rake'
 gem 'rspec'
-gem 'socksify', git: 'https://github.com/astro/socksify-ruby', ref: 'dae610084b4cebd0af92731dbf29f3dd9b9fd9d6'
 gem 'typhoeus', '~> 1.3'
