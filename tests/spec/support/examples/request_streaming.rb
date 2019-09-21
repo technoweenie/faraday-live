@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Examples for an adapter streaming a response body
-shared_examples 'a streaming request' do |url_kind, adapter, options|
+shared_examples 'a request with a streaming body' do |url_kind, adapter, options|
   options ||= {}
 
   before :all do

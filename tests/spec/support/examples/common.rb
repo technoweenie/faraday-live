@@ -9,7 +9,7 @@ shared_examples 'common request tests' do |url_kind, adapter, options|
       response_header: options[:response_header]
 
     if adapter.stream_response?
-      it_behaves_like 'a streaming request', url_kind, adapter,
+      it_behaves_like 'a request with a streaming body', url_kind, adapter,
         proxy: options[:proxy],
         request_header: options[:request_header],
         response_header: options[:response_header]
