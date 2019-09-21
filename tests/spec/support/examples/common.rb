@@ -7,6 +7,13 @@ shared_examples 'common request tests' do |url_kind, adapter, options|
     it_behaves_like 'an idempotent request', :get, url_kind, adapter,
       request_header: options[:request_header],
       response_header: options[:response_header]
+
+    if adapter.stream_response?
+      it_behaves_like 'a streaming request', url_kind, adapter,
+        proxy: options[:proxy],
+        request_header: options[:request_header],
+        response_header: options[:response_header]
+    end
   end if FaradayMethods.get_method?(adapter)
 
   context "(#{adapter}) #POST request" do

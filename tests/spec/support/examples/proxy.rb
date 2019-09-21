@@ -37,5 +37,6 @@ shared_examples 'a proxied connection' do |adapter, options|
     },
     request_header: {
       'Faraday-Proxy' => expected,
-    }
+    },
+    proxy: options[:proxy]
 end
