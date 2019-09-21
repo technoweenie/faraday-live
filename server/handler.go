@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -66,13 +67,34 @@ func Handle(kind string, infohandler InfoHandler) http.HandlerFunc {
 		log.Printf("%s %s %s [%s]",
 			r.Method, r.RequestURI, r.UserAgent(), time.Since(now))
 
+		w = pickWriter(r, w)
+
 		if len(finalinfo.Error) > 0 {
 			SendJSON(w, 500, info2)
 		} else {
 			SendJSON(w, 200, info2)
 		}
-
 	}
+}
+
+func pickWriter(r *http.Request, w http.ResponseWriter) http.ResponseWriter {
+	delay := r.FormValue("delay")
+	size := r.FormValue("size")
+	if len(delay) == 0 || len(size) == 0 {
+		return w
+	}
+
+	d, err := strconv.Atoi(delay)
+	if err != nil {
+		return w
+	}
+
+	s, err := strconv.Atoi(size)
+	if err != nil {
+		return w
+	}
+
+	return Slowdown(w, s, time.Second*time.Duration(d))
 }
 
 func SendJSON(w http.ResponseWriter, status int, obj interface{}) {
