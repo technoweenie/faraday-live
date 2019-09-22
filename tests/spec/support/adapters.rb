@@ -53,6 +53,7 @@ class FaradayAdapters
       :unverified_https_bug, # https://github.com/technoweenie/faraday-live/issues/4
       :https_proxy_bug, # https://github.com/technoweenie/faraday-live/issues/6
       :socks_proxy,
+      :stream_response,
     ].each do |feature|
       define_method("#{feature}?") { @features.include?(feature) }
     end
@@ -82,7 +83,7 @@ class FaradayAdapters
       :trace_method, :connect_with_response_body),
 
     :net_http => Adapter.new(:net_http,
-      :socks_proxy, :trace_method, :connect_with_response_body),
+      :socks_proxy, :trace_method, :connect_with_response_body, :stream_response),
 
     :patron => Adapter.new(:patron,
       :unverified_https_bug),
