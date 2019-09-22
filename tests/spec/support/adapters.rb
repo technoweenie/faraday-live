@@ -72,7 +72,7 @@ class FaradayAdapters
     :em_synchrony => Adapter.new(:em_synchrony),
 
     :excon => Adapter.new(:excon,
-      :trace_method, :connect_method),
+      :trace_method, :connect_method, :stream_response),
 
     :http => Adapter.new(:http),
 
