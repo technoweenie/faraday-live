@@ -27,7 +27,7 @@ GEM
       connection_pool (~> 2.2)
     patron (0.13.1)
     public_suffix (3.0.3)
-    rake (12.3.2)
+    rake (12.3.3)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -48,6 +48,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler
   em-http-request (>= 1.1)
   em-synchrony (>= 1.0.3)
   excon (>= 0.27.4)
